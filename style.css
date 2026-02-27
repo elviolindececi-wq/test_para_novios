@@ -40,7 +40,6 @@ body{
   border:1px solid var(--line);
   font-size:22px;
 }
-
 h1{ margin:0; font-size:20px; letter-spacing:.2px; }
 .subtitle{ margin:2px 0 0; color:var(--muted); font-size:13px; }
 
@@ -76,7 +75,6 @@ h1{ margin:0; font-size:20px; letter-spacing:.2px; }
   gap:12px;
 }
 
-/* titulo pregunta con badge */
 #q-title{
   display:flex;
   align-items:flex-start;
@@ -118,7 +116,6 @@ h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
   background: rgba(215,180,106,.10);
 }
 
-/* Hover solo donde existe hover real */
 @media (hover:hover) and (pointer:fine){
   .opt:hover{ background: rgba(255,255,255,.05); }
   .btn:hover{ background: rgba(255,255,255,.06); }
@@ -189,7 +186,7 @@ h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
   background: rgba(0,0,0,.25);
   color: var(--text);
   outline:none;
-  font-size:16px; /* iOS: evitar zoom */
+  font-size:16px;
 }
 .field small{
   display:block;
@@ -205,7 +202,7 @@ h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
   padding:14px;
   background: rgba(255,255,255,.03);
 }
-.result-box h3{ margin:0 0 8px; font-size:16px; }
+.result-box h3{ margin:0 0 8px; font-size:16px; letter-spacing:.1px; }
 .result-box h4{ margin:0 0 8px; font-size:14px; }
 .result-box ul{ margin:8px 0 0 18px; color:var(--text); }
 .result-box li{ margin:6px 0; color:var(--text); }
@@ -219,9 +216,8 @@ h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
 }
 .gold-title{ font-weight:900; letter-spacing:.2px; margin-bottom:6px; }
 .gold-percentage{ font-size:34px; font-weight:900; margin:4px 0 10px; }
-.gold-text{ color: var(--muted); line-height:1.4; }
+.gold-text{ color: var(--muted); line-height:1.5; }
 
-/* Venue note rojo */
 .field small.venue-note{ color:#e05a5a; font-weight:600; }
 
 .foot{ margin-top:18px; text-align:center; color: var(--muted); font-size:12px; }
@@ -295,3 +291,34 @@ h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
   border:1px solid rgba(215,180,106,.18);
   background: rgba(215,180,106,.06);
 }
+
+/* Boutique narrative helpers */
+.quote{
+  margin:10px 0 0;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(215,180,106,.22);
+  background: rgba(215,180,106,.06);
+  color: var(--text);
+}
+.quote p{ margin:0; }
+.scene{
+  margin-top:10px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.02);
+}
+.scene .line{
+  margin:0;
+  color: var(--text);
+  line-height:1.55;
+}
+.cta-invite{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(215,180,106,.30);
+  background: linear-gradient(180deg, rgba(215,180,106,.10), rgba(255,255,255,.02));
+}
+.cta-invite .muted{ margin-top:6px; }
