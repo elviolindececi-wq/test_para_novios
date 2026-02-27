@@ -1,0 +1,228 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>El Violín de Ceci — Test para Novios</title>
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="brand">
+      <div class="logo" aria-hidden="true">🎻</div>
+      <div>
+        <h1>El Violín de Ceci</h1>
+        <p class="subtitle">Test Premium para Novios</p>
+      </div>
+    </header>
+
+    <!-- INTRO -->
+    <section class="card screen" id="screen-intro">
+      <h2>Felicidades 💛<br/>Estás en una de las etapas más importantes de tu vida.</h2>
+
+      <p>
+        Planificar una boda mezcla emoción, ansiedad linda y decisiones hermosas…
+        y la música puede ser lo que haga que <strong>todo se sienta inolvidable</strong>.
+      </p>
+
+      <div class="intro-note">
+        <p class="muted" style="margin:0;">
+          Soy <strong>Ceci</strong> 🎻 y en este test vamos a descubrir el estilo musical ideal para su boda
+          para que cada momento se sienta <strong>con intención</strong>.
+        </p>
+      </div>
+
+      <!-- Nombre opcional para personalizar -->
+      <div class="form intro-form" style="margin-top:14px;">
+        <div class="field">
+          <label for="nombre_intro">¿Cómo te llamás? <span class="muted">(opcional)</span></label>
+          <input id="nombre_intro" name="nombre_intro" type="text"
+                 placeholder="Ej: Ana" autocomplete="given-name" />
+          <small>Lo usamos solo para personalizar tu resultado.</small>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn primary" id="btn-start" type="button">Comenzar</button>
+      </div>
+
+      <p class="fineprint">Al finalizar recibirán un resultado personalizado.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="card screen hidden" id="screen-quiz" aria-live="polite" hidden>
+      <div class="progress" aria-label="Progreso del test">
+        <div class="bar" id="quiz-bar" style="width:0%"></div>
+      </div>
+
+      <div class="quiz-head">
+        <div>
+          <p class="muted" id="quiz-greeting" style="margin:0 0 6px 0;"></p>
+          <h2 id="q-title">Pregunta</h2>
+        </div>
+        <p class="muted" id="q-count">1 de 9</p>
+      </div>
+
+      <p class="muted" id="q-hint">Elegí una opción para habilitar “Siguiente”.</p>
+
+      <div id="q-options" class="options" role="group" aria-label="Opciones" aria-describedby="q-hint"></div>
+
+      <div class="cta-row split stack quiz-actions">
+        <button class="btn ghost" id="btn-prev" type="button" disabled>Volver</button>
+        <button class="btn primary" id="btn-next" type="button" disabled>Siguiente</button>
+      </div>
+    </section>
+
+    <!-- FORM FINAL -->
+    <section class="card screen hidden" id="screen-lead" hidden>
+      <div class="progress" aria-label="Paso final">
+        <div class="bar" style="width: 92%"></div>
+      </div>
+
+      <h2>Último paso para ver sus resultados</h2>
+      <p class="muted">
+        Ya tenemos su perfil musical ✨
+        Solo necesitamos estos datos para mostrarte el resultado final y ayudarte con una propuesta a medida.
+      </p>
+
+      <div class="result-box" style="margin-top:12px;">
+        <p class="muted" style="margin:0;">
+          Al final te llevás: <strong>estilo</strong>, <strong>intensidad</strong>, <strong>set por momentos</strong> y un
+          <strong>teaser de canciones</strong> para que se lo muestres a tu pareja.
+        </p>
+      </div>
+
+      <form id="lead-form" class="form" novalidate style="margin-top:14px;">
+        <div class="field">
+          <label for="nombre">Nombre y apellido <span class="req">*</span></label>
+          <input id="nombre" name="nombre" type="text" placeholder="Ej: Ceci Lezcano" autocomplete="name" required />
+        </div>
+
+        <div class="field">
+          <label for="telefono">Teléfono <span class="req">*</span></label>
+          <input id="telefono" name="telefono" type="tel" placeholder="Ej: 0985 689 454"
+                 autocomplete="tel" inputmode="tel" required />
+          <small>Solo lo utilizamos para enviar información personalizada sobre su experiencia musical.</small>
+        </div>
+
+        <!-- Email opcional (por si querés usarlo) -->
+        <div class="field">
+          <label for="email">Email <span class="muted">(opcional)</span></label>
+          <input id="email" name="email" type="email" placeholder="Ej: ana@gmail.com" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label for="fecha_boda">Fecha de la boda <span class="req">*</span></label>
+          <input id="fecha_boda" name="fecha_boda" type="date" required />
+        </div>
+
+        <div class="field">
+          <label for="venue">¿Dónde será tu venue? <span class="req">*</span></label>
+          <select id="venue" name="venue" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>Casa 1927</option>
+            <option>Casa Corbellani</option>
+            <option>Casa Puente</option>
+            <option>Castillo</option>
+            <option>Castillo Remanso</option>
+            <option>Es Vedra</option>
+            <option>Isabella</option>
+            <option>La Glorieta</option>
+            <option>La Isabella</option>
+            <option>La Riviere</option>
+            <option>Las Takuaras</option>
+            <option>Mantra</option>
+            <option>Mantra Salon Boutique</option>
+            <option>Puerto Liebig</option>
+            <option>Royal</option>
+            <option>Royal eventos</option>
+            <option>Rusticana</option>
+            <option>Rusticana Eventos</option>
+            <option>Soir</option>
+            <option>Soir Eventos</option>
+            <option>Talleryrand</option>
+            <option>Talleryrand Costanera</option>
+            <option>Tiam Eventos</option>
+            <option>Villa Jardin</option>
+            <option>Villa Maria</option>
+            <option>Vista Verde</option>
+            <option>Otro / No está en la lista</option>
+          </select>
+
+          <small class="venue-note">
+            El lugar del venue influye en el resultado. Si no está en la lista, seleccioná “Otro”.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="invitados">Cantidad aproximada de invitados <span class="req">*</span></label>
+          <select id="invitados" name="invitados" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>Menos de 80</option>
+            <option>80 – 150</option>
+            <option>150 – 250</option>
+            <option>Más de 250</option>
+          </select>
+        </div>
+
+        <div class="cta-row split stack">
+          <button class="btn ghost" id="btn-back-to-quiz" type="button">Volver al test</button>
+          <button class="btn primary" id="btn-show-results" type="submit">Ver mis resultados</button>
+        </div>
+
+        <p class="fineprint"><span class="req">*</span> Campos obligatorios.</p>
+      </form>
+    </section>
+
+    <!-- RESULT -->
+    <section class="card screen hidden" id="screen-result" hidden>
+      <div class="progress" aria-label="Progreso final">
+        <div class="bar" style="width: 100%"></div>
+      </div>
+
+      <h2 id="result-title">Tu resultado</h2>
+      <p class="muted" id="result-subtitle"></p>
+
+      <div class="result-box" id="result-brief"></div>
+
+      <div class="cta-row">
+        <button class="btn ghost" id="btn-toggle-details" type="button">Ver análisis completo</button>
+      </div>
+
+      <div class="result-box hidden" id="result-details" hidden></div>
+
+      <div class="result-box" style="margin-top:12px;">
+        <p class="muted" style="margin:0;">
+          Si querés, te preparo <strong>2–3 opciones de canciones</strong> para su entrada según tu perfil.
+          Escribime y lo armamos rápido 🙌
+        </p>
+      </div>
+
+      <div class="cta-row split stack">
+        <button class="btn ghost" id="btn-retry" type="button">Volver a hacer el test</button>
+
+        <a class="btn ghost" id="btn-ig"
+           href="https://www.instagram.com/elviolindececi/"
+           target="_blank" rel="noopener">
+          Seguir en Instagram
+        </a>
+
+        <a class="btn primary" id="btn-wa" href="https://wa.me/595985689454" target="_blank" rel="noopener">
+          Contactar por WhatsApp con Ceci
+        </a>
+      </div>
+
+      <p class="fineprint">
+        Tip: compartile el resultado a tu pareja y comparen qué estilo sienten como “ustedes”.
+      </p>
+    </section>
+
+    <footer class="foot">
+      <span>© El Violín de Ceci</span>
+    </footer>
+  </main>
+
+  <script src="app.js?v=1" defer></script>
+</body>
+</html>
