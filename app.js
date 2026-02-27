@@ -4,7 +4,7 @@
 // ✅ Resultado cinematográfico (escena + invitación privada)
 // ✅ Envío a Google Sheets "Leads" (payload alineado)
 // ✅ Webhook nuevo
-// ✅ Calendly como CTA principal + WhatsApp como secundario
+// ✅ Calendly como CTA principal + WhatsApp con icono en HTML
 
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8qwdbls3p6A1oeKnbDqY6wd5raOacyiaYV1GIV6PkzVNyeSWYQ/exec";
 const WHATSAPP_BASE = "https://wa.me/595985689454";
@@ -203,13 +203,7 @@ const archetypes = {
     boutique: {
       identity: "Esta no es una boda que quiere impresionar. Es una boda que quiere permanecer.",
       promise: "Ustedes no están organizando un evento. Están diseñando una experiencia con intención.",
-      scene: [
-        "Puertas cerradas.",
-        "El murmullo baja apenas.",
-        "Primera nota del violín.",
-        "No es estridente.",
-        "Es preciso."
-      ]
+      scene: ["Puertas cerradas.","El murmullo baja apenas.","Primera nota del violín.","No es estridente.","Es preciso."]
     },
     set: ["Violín + piano (ideal con baby grand piano shell)","Ceremonia: clásico/romántico refinado","Cóctel: instrumental elegante con pop reinterpretado"]
   },
@@ -222,13 +216,7 @@ const archetypes = {
     boutique: {
       identity: "Su boda no necesita gritar para sentirse. Necesita verdad.",
       promise: "Buscan emoción honesta: de esas que hacen respirar hondo antes de entrar.",
-      scene: [
-        "Luz cálida.",
-        "Miradas largas.",
-        "Una melodía que abraza sin pedir permiso.",
-        "Invitados en silencio suave.",
-        "Todo se siente real."
-      ]
+      scene: ["Luz cálida.","Miradas largas.","Una melodía que abraza sin pedir permiso.","Invitados en silencio suave.","Todo se siente real."]
     },
     set: ["Violín + piano íntimo","Ceremonia: romántico suave","Cóctel: indie/pop delicado instrumental"]
   },
@@ -241,13 +229,7 @@ const archetypes = {
     boutique: {
       identity: "Su boda es una pieza con estética. Una experiencia con firma.",
       promise: "Quieren que se note que esto fue curado. Diseñado. Pensado.",
-      scene: [
-        "Una entrada con giro inesperado.",
-        "Un silencio antes del ‘wow’.",
-        "Una melodía que cambia el aire del lugar.",
-        "Reacciones contenidas.",
-        "Elegancia con identidad."
-      ]
+      scene: ["Una entrada con giro inesperado.","Un silencio antes del ‘wow’.","Una melodía que cambia el aire del lugar.","Reacciones contenidas.","Elegancia con identidad."]
     },
     set: ["Violín protagonista + piano","Arreglos exclusivos","Momento ‘wow’ elegante (performance breve)"]
   },
@@ -260,13 +242,7 @@ const archetypes = {
     boutique: {
       identity: "Su boda no se mira. Se vive.",
       promise: "Ustedes quieren un lugar donde la emoción se contagie y la energía suba sin esfuerzo.",
-      scene: [
-        "Aplausos en la entrada.",
-        "Sonrisas que se multiplican.",
-        "Una melodía que levanta el clima.",
-        "Cóctel con ritmo.",
-        "Transición perfecta a la fiesta."
-      ]
+      scene: ["Aplausos en la entrada.","Sonrisas que se multiplican.","Una melodía que levanta el clima.","Cóctel con ritmo.","Transición perfecta a la fiesta."]
     },
     set: ["Violín con presencia escénica","Hits instrumental en cóctel","Performance sorpresa para activar"]
   },
@@ -279,13 +255,7 @@ const archetypes = {
     boutique: {
       identity: "Su boda no se trata de show. Se trata de sentido.",
       promise: "Quieren un momento donde todo se apague y solo quede lo importante.",
-      scene: [
-        "Respiración contenida.",
-        "Votos que pesan.",
-        "Una melodía que tiembla suave.",
-        "Lágrimas sinceras.",
-        "Silencio con significado."
-      ]
+      scene: ["Respiración contenida.","Votos que pesan.","Una melodía que tiembla suave.","Lágrimas sinceras.","Silencio con significado."]
     },
     set: ["Violín + piano minimalista","Canciones personalizadas","Momentos íntimos dirigidos con sensibilidad"]
   }
@@ -680,7 +650,6 @@ function renderQuestion(){
     b.type = "button";
     b.className = "opt" + (answers[currentQ] === opt.key ? " selected" : "");
 
-    // CER/COC/AMB/GUIA: sin badge para que quede prolijo
     b.innerHTML = (opt.key.length <= 2)
       ? `<span class="k">${escapeHtml(opt.key)}</span>${escapeHtml(opt.text)}`
       : `${escapeHtml(opt.text)}`;
@@ -867,7 +836,7 @@ async function enviarLeadASheets(payload){
 }
 
 // ================================
-// SETLIST HELPERS (teaser dinámico por q9)
+// Helpers (teaser dinámico por q9)
 // ================================
 function pickTeasersByFocus_(primaryKey, focusMoment, max = 2){
   const sl = setlists[primaryKey];
@@ -878,12 +847,9 @@ function pickTeasersByFocus_(primaryKey, focusMoment, max = 2){
   const safeA = ceremonySongs[0] ? [ceremonySongs[0]] : [];
   const safeB = cocktailSongs[0] ? [cocktailSongs[0]] : [];
 
-  if (focusMoment === "CER") {
-    return ceremonySongs.slice(0, max);
-  }
-  if (focusMoment === "COC") {
-    return cocktailSongs.slice(0, max);
-  }
+  if (focusMoment === "CER") return ceremonySongs.slice(0, max);
+  if (focusMoment === "COC") return cocktailSongs.slice(0, max);
+
   if (focusMoment === "AMB") {
     const out = [];
     if (safeA[0]) out.push(safeA[0]);
@@ -892,7 +858,7 @@ function pickTeasersByFocus_(primaryKey, focusMoment, max = 2){
     if (out.length < max && cocktailSongs[1]) out.push(cocktailSongs[1]);
     return out.slice(0, max);
   }
-  // GUIA u otros
+
   const out = [];
   if (safeA[0]) out.push(safeA[0]);
   if (out.length < max && safeB[0]) out.push(safeB[0]);
@@ -933,7 +899,7 @@ function renderSetlistHTML_(primaryKey, intensity){
 }
 
 // ================================
-// BOUTIQUE TEXT HELPERS
+// Boutique helpers
 // ================================
 function buildBoutiqueCTA_(focusMoment){
   if (focusMoment === "CER") return "Les preparo 2–3 opciones de canciones para la entrada/ceremonia según su perfil.";
@@ -958,7 +924,7 @@ function buildWhyThisResult_(payload, primaryKey, intensity){
 }
 
 // ================================
-// RESULT RENDER (ULTRA BOUTIQUE)
+// RESULT RENDER
 // ================================
 function renderResult(payload, computed, intensity, prioridad, indice){
   const a1 = archetypes[computed.primary];
@@ -1069,11 +1035,6 @@ function renderResult(payload, computed, intensity, prioridad, indice){
 
     <hr/>
 
-    <h3>🎼 Set recomendado (formato)</h3>
-    <ul>${a1.set.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
-
-    <hr/>
-
     <h3>🎵 Setlist sugerido (canciones ideales)</h3>
     ${renderSetlistHTML_(computed.primary, intensity)}
   `;
@@ -1082,7 +1043,7 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   resultDetails.classList.add("hidden");
   btnToggleDetails.textContent = "Ver análisis completo";
 
-  // ✅ Calendly como CTA principal (con tracking + lead_id)
+  // Calendly como CTA principal (tracking + lead_id)
   if (btnCalendly){
     const calendlyParams = new URLSearchParams();
     calendlyParams.set("utm_source", tracking.utm_source || tracking.source || "test");
@@ -1093,7 +1054,7 @@ function renderResult(payload, computed, intensity, prioridad, indice){
     btnCalendly.setAttribute("href", `${CALENDLY_URL}?${calendlyParams.toString()}`);
   }
 
-  // WhatsApp: mensaje boutique + datos útiles (fallback)
+  // WhatsApp fallback
   const text =
     `Hola Ceci! ${nameForUI ? "Soy " + nameForUI + " y " : ""}hicimos el test. ` +
     `Nos salió: ${a1.name} (secundario: ${a2.name}). ` +
