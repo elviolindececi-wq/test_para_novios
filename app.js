@@ -4,6 +4,7 @@
 // ✅ Resultado cinematográfico (escena + invitación privada)
 // ✅ Envío a Google Sheets "Leads" (payload alineado)
 // ✅ Webhook nuevo
+// ✅ Calendly como CTA principal + WhatsApp como secundario
 
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8qwdbls3p6A1oeKnbDqY6wd5raOacyiaYV1GIV6PkzVNyeSWYQ/exec";
 const WHATSAPP_BASE = "https://wa.me/595985689454";
@@ -436,6 +437,8 @@ const resultBrief = $("#result-brief");
 const resultDetails = $("#result-details");
 const btnToggleDetails = $("#btn-toggle-details");
 const btnRetry = $("#btn-retry");
+
+const btnCalendly = $("#btn-calendly");
 const btnWA = $("#btn-wa");
 const btnIG = $("#btn-ig");
 
@@ -940,7 +943,6 @@ function buildBoutiqueCTA_(focusMoment){
 }
 
 function buildWhyThisResult_(payload, primaryKey, intensity){
-  // mapeos cortos para “por qué”
   const entryMap = { A:"entrada elegante", B:"entrada romántica", C:"entrada con giro inesperado", D:"entrada energética", E:"entrada íntima" };
   const cocktailMap = { A:"cóctel elegante", B:"cóctel suave", C:"cóctel con detalles wow", D:"cóctel con energía", E:"cóctel cálido e íntimo" };
   const roleMap = { A:"marcar momentos clave con clase", B:"sostener atmósfera sin invadir", C:"ser parte del concepto", D:"subir energía de celebración", E:"intensificar emoción" };
@@ -970,7 +972,6 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   const curationText = payload.q8_curation_label ? ` · 🎼 Selección: ${payload.q8_curation_label}` : "";
   const focusText = payload.q9_focus_label ? ` · 🎯 Protagonismo: ${payload.q9_focus_label}` : "";
 
-  // título = arquetipo primario (protagonista)
   resultTitle.textContent = `${a1.name}`;
   resultSubtitle.textContent =
     `${hello} · Intensidad: ${m.name} · Importancia música: ${payload.q6_music_importance}/10 · Prioridad: ${prioridad}`;
@@ -1081,7 +1082,18 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   resultDetails.classList.add("hidden");
   btnToggleDetails.textContent = "Ver análisis completo";
 
-  // WhatsApp: mensaje boutique + datos útiles
+  // ✅ Calendly como CTA principal (con tracking + lead_id)
+  if (btnCalendly){
+    const calendlyParams = new URLSearchParams();
+    calendlyParams.set("utm_source", tracking.utm_source || tracking.source || "test");
+    calendlyParams.set("utm_medium", tracking.utm_medium || "quiz");
+    calendlyParams.set("utm_campaign", tracking.utm_campaign || "quiz_result");
+    calendlyParams.set("utm_content", computed.primary);
+    calendlyParams.set("lead_id", payload.lead_id || lead_id);
+    btnCalendly.setAttribute("href", `${CALENDLY_URL}?${calendlyParams.toString()}`);
+  }
+
+  // WhatsApp: mensaje boutique + datos útiles (fallback)
   const text =
     `Hola Ceci! ${nameForUI ? "Soy " + nameForUI + " y " : ""}hicimos el test. ` +
     `Nos salió: ${a1.name} (secundario: ${a2.name}). ` +
@@ -1090,7 +1102,9 @@ function renderResult(payload, computed, intensity, prioridad, indice){
     `Prioridad: ${prioridad} · Índice: ${indice}%. ` +
     `¿Nos preparás 2–3 opciones de canciones según este perfil? 🙌`;
 
-  btnWA.setAttribute("href", `${WHATSAPP_BASE}?text=${encodeURIComponent(text)}`);
+  if (btnWA){
+    btnWA.setAttribute("href", `${WHATSAPP_BASE}?text=${encodeURIComponent(text)}`);
+  }
 }
 
 // ================================
