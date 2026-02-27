@@ -1,4 +1,3 @@
-/* style.css */
 :root{
   --bg:#0b0b0f;
   --card:#12131a;
@@ -41,16 +40,9 @@ body{
   border:1px solid var(--line);
   font-size:22px;
 }
-h1{
-  margin:0;
-  font-size:20px;
-  letter-spacing:.2px;
-}
-.subtitle{
-  margin:2px 0 0;
-  color:var(--muted);
-  font-size:13px;
-}
+
+h1{ margin:0; font-size:20px; letter-spacing:.2px; }
+.subtitle{ margin:2px 0 0; color:var(--muted); font-size:13px; }
 
 .card{
   background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -84,22 +76,16 @@ h1{
   gap:12px;
 }
 
+/* titulo pregunta con badge */
 #q-title{
   display:flex;
   align-items:flex-start;
   gap:10px;
 }
 
-h2{
-  margin:0 0 8px 0;
-  font-size:20px;
-  line-height:1.25;
-}
+h2{ margin:0 0 8px 0; font-size:20px; line-height:1.25; }
 
-.muted{
-  color:var(--muted);
-  margin:0;
-}
+.muted{ color:var(--muted); margin:0; }
 .fineprint{
   color:var(--muted);
   font-size:12px;
@@ -132,6 +118,7 @@ h2{
   background: rgba(215,180,106,.10);
 }
 
+/* Hover solo donde existe hover real */
 @media (hover:hover) and (pointer:fine){
   .opt:hover{ background: rgba(255,255,255,.05); }
   .btn:hover{ background: rgba(255,255,255,.06); }
@@ -179,10 +166,7 @@ h2{
   min-width: 160px;
 }
 .btn:active{ transform: scale(.99); }
-.btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
 
 .btn.primary{
   border-color: rgba(215,180,106,.35);
@@ -233,34 +217,16 @@ h2{
   background: linear-gradient(180deg, rgba(215,180,106,.14), rgba(255,255,255,.02));
   padding:14px;
 }
-.gold-title{
-  font-weight:900;
-  letter-spacing:.2px;
-  margin-bottom:6px;
-}
-.gold-percentage{
-  font-size:34px;
-  font-weight:900;
-  margin:4px 0 10px;
-}
-.gold-text{
-  color: var(--muted);
-  line-height:1.4;
-}
+.gold-title{ font-weight:900; letter-spacing:.2px; margin-bottom:6px; }
+.gold-percentage{ font-size:34px; font-weight:900; margin:4px 0 10px; }
+.gold-text{ color: var(--muted); line-height:1.4; }
 
-.field small.venue-note{
-  color:#e05a5a;
-  font-weight:600;
-}
+/* Venue note rojo */
+.field small.venue-note{ color:#e05a5a; font-weight:600; }
 
-.foot{
-  margin-top:18px;
-  text-align:center;
-  color: var(--muted);
-  font-size:12px;
-}
+.foot{ margin-top:18px; text-align:center; color: var(--muted); font-size:12px; }
 
-/* SLIDER */
+/* Slider */
 .slider-wrap{
   border:1px solid var(--line);
   background: rgba(255,255,255,.03);
@@ -294,7 +260,7 @@ h2{
   color: var(--muted);
 }
 
-/* BADGE dorado iPhone-safe */
+/* Badge dorado */
 .q-icon-badge{
   width:28px;
   height:28px;
