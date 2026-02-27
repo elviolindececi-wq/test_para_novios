@@ -8,6 +8,7 @@
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8qwdbls3p6A1oeKnbDqY6wd5raOacyiaYV1GIV6PkzVNyeSWYQ/exec";
 const WHATSAPP_BASE = "https://wa.me/595985689454";
 const INSTAGRAM_URL = "https://www.instagram.com/elviolindececi/";
+const CALENDLY_URL = "https://calendly.com/elviolindececi/30min";
 
 const $ = (sel) => document.querySelector(sel);
 
