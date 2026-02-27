@@ -1,11 +1,8 @@
-// app.js — El Violín de Ceci (Repo nuevo)
-// ✅ 9 preguntas (incluye q9_focus_moment)
-// ✅ Intro emocional + nombre opcional
-// ✅ Resultados personalizados con nombre
-// ✅ Payload alineado a Google Sheet "Leads" (columnas exactas)
-// ✅ UTMs + source
-// ✅ venue_normalizado + dias_hasta_boda + lead_id + intensity_votes
+// app.js — Premium completo (9 preguntas + resultado con arquetipo protagonista)
 // ✅ Webhook nuevo
+// ✅ Arquetipo primario + descripción completa visibles
+// ✅ Matiz secundario visible
+// ✅ Intensidad musical + setlist + prioridad + envío a Sheets (Leads)
 
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8qwdbls3p6A1oeKnbDqY6wd5raOacyiaYV1GIV6PkzVNyeSWYQ/exec";
 const WHATSAPP_BASE = "https://wa.me/595985689454";
@@ -16,7 +13,7 @@ const $ = (sel) => document.querySelector(sel);
 function show(id){
   document.querySelectorAll(".screen").forEach(s => {
     s.classList.add("hidden");
-    s.setAttribute("hidden", "hidden");
+    s.setAttribute("hidden","hidden");
   });
   const el = document.querySelector(id);
   if (!el) return console.error("No existe screen:", id);
@@ -41,22 +38,39 @@ function firstNameFrom(full){
 }
 
 function safeUUID(){
-  try {
-    if (crypto?.randomUUID) return crypto.randomUUID();
-  } catch {}
-  // fallback simple (no perfecto, pero suficiente)
+  try { if (crypto?.randomUUID) return crypto.randomUUID(); } catch {}
   return "lead_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
 }
 
 function getUTMParams_(){
   const p = new URLSearchParams(window.location.search);
-  const utm_source = p.get("utm_source") || "";
-  const utm_medium = p.get("utm_medium") || "";
-  const utm_campaign = p.get("utm_campaign") || "";
-  const utm_content = p.get("utm_content") || "";
-  const utm_term = p.get("utm_term") || "";
-  const source = p.get("source") || p.get("src") || ""; // opcional
-  return { source, utm_source, utm_medium, utm_campaign, utm_content, utm_term };
+  return {
+    source: p.get("source") || p.get("src") || "",
+    utm_source: p.get("utm_source") || "",
+    utm_medium: p.get("utm_medium") || "",
+    utm_campaign: p.get("utm_campaign") || "",
+    utm_content: p.get("utm_content") || "",
+    utm_term: p.get("utm_term") || ""
+  };
+}
+
+function normalizeVenue(s){
+  return (s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function daysUntil(dateStr){
+  if(!dateStr) return "";
+  const [y,m,d] = String(dateStr).split("-").map(Number);
+  if (!y || !m || !d) return "";
+  const target = new Date(Date.UTC(y, m-1, d, 12, 0, 0));
+  const now = new Date();
+  const nowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
+  return String(Math.ceil((target.getTime() - nowUTC.getTime()) / (1000*60*60*24)));
 }
 
 // ================================
@@ -174,14 +188,64 @@ const questions = [
 ];
 
 // ================================
-// ARCHETYPES & MODULES
+// ARCHETYPES
 // ================================
 const archetypes = {
-  A: { name: "💎 Clásicos Elegantes", tagline: "La excelencia es el lenguaje del amor.", brief: "Orden, armonía y estética impecable. La emoción es contenida, refinada y profundamente intencional.", full: "Ustedes valoran coherencia y dirección. No improvisan momentos: los diseñan. La música ideal marca entradas y transiciones con elegancia, sin exageración.", set: ["Violín + piano (ideal con baby grand piano shell)","Ceremonia: clásico/romántico refinado","Cóctel: instrumental elegante con pop reinterpretado"] },
-  B: { name: "🌿 Románticos Naturales", tagline: "Si no se siente auténtico, no es para nosotros.", brief: "Calidez, luz suave y emoción genuina. Menos show, más verdad.", full: "Priorizan conexión por encima del impacto. La música acompaña y sostiene la atmósfera sin invadir: romántica, orgánica, íntima.", set: ["Violín + piano íntimo","Ceremonia: romántico suave","Cóctel: indie/pop delicado instrumental"] },
-  C: { name: "🎨 Creativos Vanguardistas", tagline: "No queremos una boda. Queremos una experiencia.", brief: "Editorial, audaz y con identidad propia. Un concepto, no un formato.", full: "Piensan en narrativa y diseño. La música puede sorprender con arreglos únicos y giros inesperados, siempre con estética cuidada.", set: ["Violín protagonista + piano","Arreglos exclusivos","Momento ‘wow’ elegante (performance breve)"] },
-  D: { name: "🎉 Sociales Festivos", tagline: "Queremos que todos recuerden esta noche.", brief: "Celebración, energía y momentos compartidos. La emoción es expansiva.", full: "Diseñan pensando en la vibra del invitado. La música marca el ritmo y puede subir energía con inteligencia: transiciones hacia una fiesta inolvidable.", set: ["Violín con presencia escénica","Hits instrumental en cóctel","Performance sorpresa para activar"] },
-  E: { name: "🤍 Íntimos Emocionales", tagline: "No buscamos espectáculo. Buscamos significado.", brief: "Profundidad, historia y emoción silenciosa. Momentos que se quedan en la piel.", full: "Priorizan lo verdadero. La música ideal es puente emocional: acompaña votos, lecturas y momentos simbólicos con sensibilidad.", set: ["Violín + piano minimalista","Canciones personalizadas","Momentos íntimos dirigidos con sensibilidad"] }
+  A: {
+    name: "💎 Clásicos Elegantes",
+    tagline: "La excelencia es el lenguaje del amor.",
+    brief: "Orden, armonía y estética impecable. La emoción es contenida, refinada y profundamente intencional.",
+    full: "Ustedes valoran coherencia y dirección. No improvisan momentos: los diseñan. La música ideal marca entradas y transiciones con elegancia, sin exageración. Se siente premium, pulido y emocionalmente seguro: todo fluye con clase.",
+    set: [
+      "Violín + piano (ideal con baby grand piano shell)",
+      "Ceremonia: clásico/romántico refinado",
+      "Cóctel: instrumental elegante con pop reinterpretado"
+    ]
+  },
+  B: {
+    name: "🌿 Románticos Naturales",
+    tagline: "Si no se siente auténtico, no es para nosotros.",
+    brief: "Calidez, luz suave y emoción genuina. Menos show, más verdad.",
+    full: "Priorizan conexión por encima del impacto. La música acompaña y sostiene la atmósfera sin invadir. Se siente orgánica, íntima y real: como una historia contada bajito, pero que deja huella.",
+    set: [
+      "Violín + piano íntimo",
+      "Ceremonia: romántico suave",
+      "Cóctel: indie/pop delicado instrumental"
+    ]
+  },
+  C: {
+    name: "🎨 Creativos Vanguardistas",
+    tagline: "No queremos una boda. Queremos una experiencia.",
+    brief: "Editorial, audaz y con identidad propia. Un concepto, no un formato.",
+    full: "Piensan en narrativa y diseño. La música puede sorprender con arreglos únicos y giros inesperados, siempre con estética cuidada. Ustedes quieren identidad: algo que se note distinto, pero elegante.",
+    set: [
+      "Violín protagonista + piano",
+      "Arreglos exclusivos",
+      "Momento ‘wow’ elegante (performance breve)"
+    ]
+  },
+  D: {
+    name: "🎉 Sociales Festivos",
+    tagline: "Queremos que todos recuerden esta noche.",
+    brief: "Celebración, energía y momentos compartidos. La emoción es expansiva.",
+    full: "Diseñan pensando en la vibra del invitado. La música marca el ritmo y sube energía con inteligencia: momentos de aplauso, sonrisas y transición natural a una fiesta inolvidable.",
+    set: [
+      "Violín con presencia escénica",
+      "Hits instrumental en cóctel",
+      "Performance sorpresa para activar"
+    ]
+  },
+  E: {
+    name: "🤍 Íntimos Emocionales",
+    tagline: "No buscamos espectáculo. Buscamos significado.",
+    brief: "Profundidad, historia y emoción silenciosa. Momentos que se quedan en la piel.",
+    full: "Priorizan lo verdadero. La música ideal es puente emocional: acompaña votos, lecturas y momentos simbólicos con sensibilidad. No necesita volumen para ser intensa: se siente cerca.",
+    set: [
+      "Violín + piano minimalista",
+      "Canciones personalizadas",
+      "Momentos íntimos dirigidos con sensibilidad"
+    ]
+  }
 };
 
 const musicModules = {
@@ -191,7 +255,7 @@ const musicModules = {
 };
 
 // ================================
-// SETLISTS + ADDONS (igual a tu versión, resumido aquí)
+// SETLISTS + ADDONS
 // ================================
 const setlists = {
   A: { title: "Setlist recomendado — Clásicos Elegantes", moments: [
@@ -228,37 +292,18 @@ const intensityAddOns = {
 };
 
 // ================================
-// HELPERS (priority, venue, dates)
+// PRIORIDAD + ÍNDICE
 // ================================
-function daysUntil(dateStr){
-  if(!dateStr) return "";
-  const [y,m,d] = String(dateStr).split("-").map(Number);
-  if (!y || !m || !d) return "";
-  const target = new Date(Date.UTC(y, m-1, d, 12, 0, 0));
-  const now = new Date();
-  const nowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0));
-  return String(Math.ceil((target.getTime() - nowUTC.getTime()) / (1000*60*60*24)));
-}
-
-function normalizeVenue(s){
-  return (s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function computePriority(lead, intensity){
+function computePriority(payload, intensity){
   let points = 0;
 
   if (intensity === "M1") points += 1;
   if (intensity === "M2") points += 2;
   if (intensity === "M3") points += 3;
 
-  if (lead.invitados === "80 – 150") points += 1;
-  if (lead.invitados === "150 – 250") points += 2;
-  if (lead.invitados === "Más de 250") points += 3;
+  if (payload.invitados === "80 – 150") points += 1;
+  if (payload.invitados === "150 – 250") points += 2;
+  if (payload.invitados === "Más de 250") points += 3;
 
   const VENUE_POINTS = {
     "la riviere": 2,"es vedra": 2,"las takuaras": 2,"castillo remanso": 2,"casa puente": 2,"castillo": 2,"puerto liebig": 2,
@@ -268,18 +313,18 @@ function computePriority(lead, intensity){
     "rusticana": 0,"rusticana eventos": 0,"isabella": 0,"tiam eventos": 0,"mantra": 0
   };
 
-  const v = normalizeVenue(lead.venue);
+  const v = normalizeVenue(payload.venue);
   if (!v || v.includes("otro")) points += 0;
   else points += (VENUE_POINTS[v] ?? 0);
 
-  const days = Number(daysUntil(lead.fecha_boda));
+  const days = Number(payload.dias_hasta_boda);
   if (Number.isFinite(days)){
     if (days <= 90) points += 3;
     else if (days <= 180) points += 2;
     else if (days <= 365) points += 1;
   }
 
-  const mi = Number(lead.q6_music_importance);
+  const mi = Number(payload.q6_music_importance);
   if (Number.isFinite(mi)) {
     if (mi >= 8) points += 2;
     else if (mi >= 5) points += 1;
@@ -309,13 +354,13 @@ function investmentBlock(intensity){
 // ================================
 let lead = {};
 let currentQ = 0;
-let answers = Array(questions.length).fill(null);          // respuestas crudas por pregunta
-let intensityAnswers = Array(questions.length).fill(null); // votos M1/M2/M3 por pregunta (donde aplica)
+let answers = Array(questions.length).fill(null);
+let intensityAnswers = Array(questions.length).fill(null);
+
 let sending = false;
 let locked = false;
 
 let introName = "";
-
 let q3_planning_label = "";
 let q8_curation_label = "";
 let q9_focus_label = "";
@@ -399,7 +444,7 @@ btnNext?.addEventListener("click", () => {
     return;
   }
 
-  // Prefill nombre si se dio al inicio
+  // Prefill nombre
   const nameEl = $("#nombre");
   if (nameEl && introName && !String(nameEl.value || "").trim()){
     nameEl.value = introName;
@@ -437,16 +482,14 @@ leadForm?.addEventListener("submit", async (e) => {
   }
 
   const computed = computeArchetype(answers);
-
   const intensityPack = computeIntensityPack(intensityAnswers, lead, answers);
   const intensity = intensityPack.intensity;
-  const intensity_votes = intensityPack.votesStr;
 
-  const payloadBase = buildSheetPayloadBase(lead, answers, intensity_votes);
-  const pr = computePriority(payloadBase, intensity);
+  const basePayload = buildSheetPayloadBase(lead, answers, intensityPack.votesStr);
+  const pr = computePriority(basePayload, intensity);
   const indice = getDesignIndex(pr.prioridad);
 
-  const payload = buildFinalPayload(payloadBase, computed, intensity, pr, indice);
+  const payload = buildFinalPayload(basePayload, computed, intensity, pr, indice);
 
   renderResult(payload, computed, intensity, pr.prioridad, indice);
   show("#screen-result");
@@ -528,6 +571,7 @@ function renderQuestion(){
       : `Vamos juntos ✨ Elegí lo que más los represente.`;
   }
 
+  // badge del icono
   const parts = q.title.split(" ");
   const icon = parts.shift() || "";
   const rest = parts.join(" ");
@@ -592,7 +636,9 @@ function renderQuestion(){
     const b = document.createElement("button");
     b.type = "button";
     b.className = "opt" + (answers[currentQ] === opt.key ? " selected" : "");
-    b.innerHTML = `<span class="k">${escapeHtml(opt.key)}</span>${escapeHtml(opt.text)}`;
+    b.innerHTML = (opt.key.length <= 2)
+      ? `<span class="k">${escapeHtml(opt.key)}</span>${escapeHtml(opt.text)}`
+      : `${escapeHtml(opt.text)}`; // para CER/COC/AMB/GUIA se ve mejor sin badge
 
     b.addEventListener("click", () => {
       answers[currentQ] = opt.key;
@@ -613,11 +659,12 @@ function renderQuestion(){
 }
 
 // ================================
-// COMPUTE ARCHETYPE (solo q1,q2,q4,q5,q7)
+// COMPUTE ARCHETYPE (q1,q2,q4,q5,q7)
 // ================================
 function computeArchetype(ans){
   const scores = {A:0, B:0, C:0, D:0, E:0};
   const includeIdx = [0, 1, 3, 4, 6];
+
   includeIdx.forEach(i => {
     const a = ans[i];
     if (a && scores[a] !== undefined) scores[a]++;
@@ -645,22 +692,23 @@ function computeArchetype(ans){
       if (secTied.includes(ans[idx])) { secTied = [ans[idx]]; break; }
     }
   }
+
   return { scores, primary, secondary: secTied[0] || "A" };
 }
 
 // ================================
-// INTENSITY PACK (devuelve intensidad + votes)
+// INTENSITY PACK
 // ================================
 function computeIntensityPack(intensityArr, lead, answers){
   const counts = {M1:0, M2:0, M3:0};
   intensityArr.forEach(x => { if(x && counts[x] !== undefined) counts[x]++; });
 
-  // Ajustes por invitados
+  // invitados
   if (lead.invitados === "150 – 250") counts.M2 += 1;
   if (lead.invitados === "Más de 250") counts.M3 += 2;
   if (lead.invitados === "Menos de 80") counts.M1 += 1;
 
-  // Ajustes por venue texto
+  // venue texto
   const v = normalizeVenue(lead.venue);
   if (v.includes("hotel")) counts.M2 += 1;
   if (v.includes("salon")) counts.M2 += 1;
@@ -668,7 +716,7 @@ function computeIntensityPack(intensityArr, lead, answers){
   if (v.includes("playa") || v.includes("destino")) counts.M3 += 1;
   if (v.includes("iglesia") || v.includes("capilla")) counts.M1 += 1;
 
-  // Ajuste por slider (importancia música)
+  // slider
   const mi = Number(musicImportance);
   if (Number.isFinite(mi)) {
     if (mi >= 9) counts.M3 += 2;
@@ -676,8 +724,8 @@ function computeIntensityPack(intensityArr, lead, answers){
     else if (mi <= 3) counts.M1 += 1;
   }
 
-  // Ajuste por q9 (momento principal)
-  const q9 = answers[8]; // CER/COC/AMB/GUIA
+  // q9 (momento principal)
+  const q9 = answers[8];
   if (q9 === "COC") counts.M3 += 1;
   if (q9 === "AMB") counts.M2 += 1;
   if (q9 === "CER") counts.M2 += 1;
@@ -686,7 +734,7 @@ function computeIntensityPack(intensityArr, lead, answers){
   const max = Math.max(...entries.map(([,v]) => v));
   let tied = entries.filter(([,v]) => v === max).map(([k]) => k);
 
-  // desempate: último voto explícito en intensidadArr
+  // desempate: último voto explícito
   if (tied.length > 1){
     for (let i = intensityArr.length - 1; i >= 0; i--){
       const val = intensityArr[i];
@@ -701,7 +749,7 @@ function computeIntensityPack(intensityArr, lead, answers){
 }
 
 // ================================
-// PAYLOAD (alineado a tu Sheet)
+// PAYLOAD (Sheet Leads)
 // ================================
 function buildSheetPayloadBase(lead, answers, intensity_votes){
   const q = (i) => answers[i] || "";
@@ -731,7 +779,7 @@ function buildSheetPayloadBase(lead, answers, intensity_votes){
     venue_normalizado,
     invitados: lead.invitados,
 
-    // respuestas (con nombres de columnas del Sheet)
+    // respuestas
     q1_escena: q(0),
     q2_espacio: q(1),
 
@@ -751,10 +799,9 @@ function buildSheetPayloadBase(lead, answers, intensity_votes){
     q9_focus_moment: q(8),
     q9_focus_label: q9_focus_label || "",
 
-    // debug
     intensity_votes,
 
-    // pipeline defaults
+    // pipeline
     estado: "Nuevo",
     fecha_contacto: "",
     notas: ""
@@ -764,11 +811,9 @@ function buildSheetPayloadBase(lead, answers, intensity_votes){
 function buildFinalPayload(base, computed, intensity, pr, indice){
   return {
     ...base,
-
     arquetipo_primary: archetypes[computed.primary].name,
     arquetipo_secondary: archetypes[computed.secondary].name,
     intensidad_musical: intensity,
-
     prioridad: pr.prioridad,
     prioridad_points: pr.points,
     indice_diseno: indice
@@ -781,7 +826,6 @@ async function enviarLeadASheets(payload){
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload),
   });
-
   const text = await res.text();
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${text}`);
   return text;
@@ -834,7 +878,7 @@ function renderSetlistHTML_(primaryKey, intensity){
 }
 
 // ================================
-// RESULT RENDER
+// RESULT RENDER (✅ arquetipo protagonista + descripción completa visible)
 // ================================
 function renderResult(payload, computed, intensity, prioridad, indice){
   const a1 = archetypes[computed.primary];
@@ -849,31 +893,40 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   const curationText = payload.q8_curation_label ? ` · 🎼 Selección: ${payload.q8_curation_label}` : "";
   const focusText = payload.q9_focus_label ? ` · 🎯 Protagonismo: ${payload.q9_focus_label}` : "";
 
-  resultTitle.textContent = nameForUI ? `${hello} — tu resultado` : `Tu resultado`;
+  // ✅ ahora el título muestra el arquetipo primario directamente
+  resultTitle.textContent = `${a1.name}`;
   resultSubtitle.textContent =
-    `Intensidad musical: ${m.name} · Importancia música: ${payload.q6_music_importance}/10 · Prioridad interna: ${prioridad}`;
+    `${hello} · Intensidad musical: ${m.name} · Importancia música: ${payload.q6_music_importance}/10 · Prioridad interna: ${prioridad}`;
 
+  // ✅ bloque visible: arquetipo + descripción completa + secundario visible
   resultBrief.innerHTML = `
-    <p class="muted" style="margin:0 0 10px 0;">
-      ${escapeHtml(hello)} Este perfil está pensado para que su música “cuente” lo que viven.
-    </p>
+    <div class="result-box">
+      <h3>${escapeHtml(a1.tagline)}</h3>
+      <p style="margin:0 0 10px 0;">${escapeHtml(a1.brief)}</p>
+      <p class="muted" style="margin:0;"><strong>Cómo es este arquetipo:</strong> ${escapeHtml(a1.full)}</p>
 
-    <h3>${escapeHtml(a1.tagline)}</h3>
-    <p>${escapeHtml(a1.brief)}</p>
+      <p class="muted" style="margin-top:10px;">
+        📍 Lugar: ${escapeHtml(payload.venue || "—")} · 👥 Invitados: ${escapeHtml(payload.invitados || "—")}
+        ${planningText}${curationText}${focusText}
+      </p>
+    </div>
 
-    <p class="muted" style="margin-top:8px;">
-      📍 Lugar: ${escapeHtml(payload.venue || "—")} · 👥 Invitados: ${escapeHtml(payload.invitados || "—")}
-      ${planningText}${curationText}${focusText}
-    </p>
+    <div class="result-box" style="margin-top:12px;">
+      <h3>✨ Matiz secundario</h3>
+      <p style="margin:0;"><strong>${escapeHtml(a2.name)}</strong> — ${escapeHtml(a2.tagline)}</p>
+    </div>
 
-    <hr/>
-    <h3>🎻 Estilo musical: ${escapeHtml(m.name)}</h3>
-    <p>${escapeHtml(m.brief)}</p>
+    <div class="result-box" style="margin-top:12px;">
+      <h3>🎻 Intensidad musical ideal: ${escapeHtml(m.name)}</h3>
+      <p class="muted" style="margin:0 0 8px 0;">${escapeHtml(m.brief)}</p>
+      <p style="margin:0;">${escapeHtml(m.full)}</p>
+    </div>
 
-    <hr/>
-    <h3>🎵 Teaser de setlist (ideal para ustedes)</h3>
-    <ul>${teasers.map(t => `<li>${escapeHtml(t)}</li>`).join("")}</ul>
-    <p class="muted" style="margin-top:10px;">En el análisis completo está el setlist por momentos (ceremonia, cóctel y wow).</p>
+    <div class="result-box" style="margin-top:12px;">
+      <h3>🎵 Teaser de setlist</h3>
+      <ul>${teasers.map(t => `<li>${escapeHtml(t)}</li>`).join("")}</ul>
+      <p class="muted" style="margin-top:10px;">En el análisis completo está el setlist por momentos (ceremonia, cóctel y wow).</p>
+    </div>
   `;
 
   const gold = `
@@ -903,25 +956,10 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   ` : "";
 
   resultDetails.innerHTML = `
-    <h3>🔎 Lo que esto dice sobre ustedes</h3>
-    <p>${escapeHtml(a1.full)}</p>
-
-    <hr/>
-
-    <h3>✨ Matiz secundario</h3>
-    <p><strong>${escapeHtml(a2.name)}</strong> — ${escapeHtml(a2.tagline)}</p>
-
-    <hr/>
-
-    <h3>🎶 Cómo debería vivirse su música</h3>
-    <p>${escapeHtml(m.full)}</p>
-
-    ${gold}
-
-    <hr/>
-
     <h3>💎 Perfil de inversión</h3>
     <p>${escapeHtml(investmentBlock(intensity))}</p>
+
+    ${gold}
 
     ${curationBlock}
 
@@ -955,4 +993,4 @@ function renderResult(payload, computed, intensity, prioridad, indice){
 // INIT
 // ================================
 show("#screen-intro");
-console.log("✅ app.js (repo nuevo) cargado OK", { tracking, lead_id });
+console.log("✅ app.js PREMIUM cargado OK", { lead_id, tracking });
