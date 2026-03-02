@@ -5,6 +5,7 @@
 // ✅ Envío a Google Sheets "Leads" (payload alineado)
 // ✅ Webhook nuevo
 // ✅ Calendly como CTA principal + WhatsApp con icono en HTML
+// ✅ GA4: quiz_start, quiz_completed, lead_submitted, cta_calendly_click
 
 const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8qwdbls3p6A1oeKnbDqY6wd5raOacyiaYV1GIV6PkzVNyeSWYQ/exec";
 const WHATSAPP_BASE = "https://wa.me/595985689454";
@@ -12,6 +13,17 @@ const INSTAGRAM_URL = "https://www.instagram.com/elviolindececi/";
 const CALENDLY_URL = "https://calendly.com/elviolindececi/30min";
 
 const $ = (sel) => document.querySelector(sel);
+
+// ================================
+// GA4 helper
+// ================================
+function gaEvent(name, params = {}){
+  try{
+    if (typeof window.gtag === "function") {
+      window.gtag("event", name, params);
+    }
+  } catch {}
+}
 
 function show(id){
   document.querySelectorAll(".screen").forEach(s => {
@@ -381,7 +393,7 @@ let q9_focus_label = "";
 let musicImportance = questions.find(q => q.type === "slider")?.slider?.defaultValue ?? 5;
 
 const tracking = getUTMParams_();
-const lead_id = safeUUID();
+let lead_id = safeUUID(); // ✅ regenerable por sesión
 
 // ================================
 // ELEMENTS
@@ -416,6 +428,9 @@ const btnIG = $("#btn-ig");
 // EVENTS
 // ================================
 btnStart?.addEventListener("click", () => {
+  // ✅ nueva sesión
+  lead_id = safeUUID();
+
   lead = {};
   currentQ = 0;
   answers = Array(questions.length).fill(null);
@@ -433,6 +448,14 @@ btnStart?.addEventListener("click", () => {
 
   const dateEl = $("#fecha_boda");
   if (dateEl) dateEl.min = new Date().toISOString().slice(0,10);
+
+  // ✅ GA4: inicia test
+  gaEvent("quiz_start", {
+    lead_id,
+    utm_source: tracking.utm_source || tracking.source || "",
+    utm_medium: tracking.utm_medium || "",
+    utm_campaign: tracking.utm_campaign || ""
+  });
 
   renderQuestion();
   show("#screen-quiz");
@@ -489,6 +512,13 @@ leadForm?.addEventListener("submit", async (e) => {
 
   lead = { nombre, telefono, email, fecha_boda, venue, invitados };
 
+  // ✅ GA4: envío de formulario (lead)
+  gaEvent("lead_submitted", {
+    lead_id,
+    invitados,
+    venue
+  });
+
   locked = true;
   if (btnShowResults){
     btnShowResults.disabled = true;
@@ -507,6 +537,15 @@ leadForm?.addEventListener("submit", async (e) => {
 
   renderResult(payload, computed, intensity, pr.prioridad, indice);
   show("#screen-result");
+
+  // ✅ GA4: completó el test (llegó a resultado)
+  gaEvent("quiz_completed", {
+    lead_id,
+    arquetipo_primary: computed.primary,
+    arquetipo_secondary: computed.secondary,
+    intensidad: intensity,
+    prioridad: pr.prioridad
+  });
 
   if (!sending){
     sending = true;
@@ -535,6 +574,9 @@ btnToggleDetails?.addEventListener("click", () => {
 });
 
 btnRetry?.addEventListener("click", () => {
+  // ✅ nueva sesión
+  lead_id = safeUUID();
+
   lead = {};
   currentQ = 0;
   answers = Array(questions.length).fill(null);
@@ -561,6 +603,11 @@ btnRetry?.addEventListener("click", () => {
 });
 
 if (btnIG) btnIG.setAttribute("href", INSTAGRAM_URL);
+
+// ✅ GA4: clic Calendly
+btnCalendly?.addEventListener("click", () => {
+  gaEvent("cta_calendly_click", { lead_id });
+});
 
 // ================================
 // RENDER QUESTION
