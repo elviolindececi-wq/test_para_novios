@@ -331,12 +331,47 @@ function computePriority(payload, intensity){
   if (payload.invitados === "Más de 250") points += 3;
 
   const VENUE_POINTS = {
-    "la riviere": 2,"es vedra": 2,"las takuaras": 2,"castillo remanso": 2,"casa puente": 2,"castillo": 2,"puerto liebig": 2,
-    "talleryrand": 2,"talleryrand costanera": 2,"villa maria": 2,"casa corbellani": 2,"casita quinta": 2,
-    "villa jardin": 1,"royal": 1,"royal eventos": 1,"soir": 1,"soir eventos": 1,"vista verde": 1,"la isabella": 1,
-    "casa 1927": 1,"la glorieta": 1,"mantra salon boutique": 1,
-    "rusticana": 0,"rusticana eventos": 0,"isabella": 0,"tiam eventos": 0,"mantra": 0
-  };
+  "la riviere": 2,
+  "es vedra": 2,
+  "las takuaras": 2,
+  "castillo remanso": 2,
+  "casa puente": 2,
+  "castillo": 2,
+  "puerto liebig": 2,
+
+  "talleryrand": 2,
+  "talleryrand costanera": 2,
+  "villa maria": 2,
+  "casa corbellani": 2,
+  "casita quinta": 2,
+
+  // NUEVOS VENUES
+  "las ventanas": 2,
+  "la roche eventos": 1,
+  "parana country club": 2,
+  "costa del lago": 1,
+  "bissini": 2,
+  "foz": 1,
+  "bellagio": 2,
+
+  "villa jardin": 1,
+  "royal": 1,
+  "royal eventos": 1,
+  "soir": 1,
+  "soir eventos": 1,
+  "vista verde": 1,
+  "la isabella": 1,
+
+  "casa 1927": 1,
+  "la glorieta": 1,
+  "mantra salon boutique": 1,
+
+  "rusticana": 0,
+  "rusticana eventos": 0,
+  "isabella": 0,
+  "tiam eventos": 0,
+  "mantra": 0
+};
 
   const v = normalizeVenue(payload.venue);
   if (!v || v.includes("otro")) points += 0;
