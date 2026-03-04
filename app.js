@@ -1155,3 +1155,4 @@ function renderResult(payload, computed, intensity, prioridad, indice){
 // ================================
 show("#screen-intro");
 console.log("✅ app.js ULTRA BOUTIQUE cargado OK", { lead_id, tracking });
+
