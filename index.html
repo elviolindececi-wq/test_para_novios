@@ -1,453 +1,237 @@
-/* style.css */
-:root{
-  --bg:#0b0b0f;
-  --card:#12131a;
-  --soft:#1b1d27;
-  --text:#f4f4f6;
-  --muted:#b7bac7;
-  --gold:#d7b46a;
-  --line:rgba(255,255,255,.08);
-  --radius:18px;
-}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>El Violín de Ceci — Test para Novios</title>
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
-/* style.css */
-:root{
-  --bg:#0b0b0f;
-  --card:#12131a;
-  --soft:#1b1d27;
-  --text:#f4f4f6;
-  --muted:#b7bac7;
-  --gold:#d7b46a;
-  --line:rgba(255,255,255,.08);
-  --radius:18px;
-}
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HW5H8V2SRT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HW5H8V2SRT');
+  </script>
 
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
+  <link rel="stylesheet" href="style.css?v=14" />
+</head>
 
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg); /* base sólida */
-  color:var(--text);
-  overflow-x:hidden;
-}
+<body>
+  <main class="wrap">
+    <header class="brand">
+      <div class="logo" aria-hidden="true">🎻</div>
+      <div>
+        <h1>El Violín de Ceci</h1>
+        <p class="subtitle">Test Premium para Novios</p>
+      </div>
+    </header>
 
-/* ✅ Fondo fijo (estable al cambiar de pantalla/altura) */
-body::after{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+    <!-- INTRO -->
+    <section class="card screen" id="screen-intro">
+      <h2>Tu boda no es un evento.<br/>Es una experiencia emocional irrepetible.</h2>
 
-  /* Gradientes ajustados para mobile:
-     - más grandes (menos banding)
-     - más “lejos” del borde
-     - menos cambios perceptibles al scrollear */
-  background:
-    radial-gradient(1400px 900px at 18% -18%, rgba(215,180,106,.16), transparent 60%),
-    radial-gradient(1100px 800px at 115% 12%, rgba(135,94,255,.12), transparent 62%),
-    radial-gradient(900px 700px at 50% 110%, rgba(255,255,255,.04), transparent 65%);
-  transform: translateZ(0);
-}
+      <p class="muted" style="margin-top:8px;">
+        Felicidades ✨ Estás en una de las etapas más importantes de tu vida: planificando tu boda.
+        Es normal querer que todo salga perfecto.
+        <br/><br/>
+        Soy Ceci, y en este test vamos a descubrir juntas cómo lograr que la música cree un momento inolvidable.
+      </p>
 
-/* ✅ Anti-banding (grain overlay) */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
+      <div class="form" style="margin-top:14px;">
+        <div class="field">
+          <label for="nombre_intro">¿Cómo te llamás?</label>
+          <input id="nombre_intro" type="text" placeholder="Ej: Paulina" autocomplete="given-name" />
+          <small>Opcional. Solo para personalizar tu experiencia.</small>
+        </div>
+      </div>
 
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-  opacity: .045; /* 0.035–0.06 */
-  mix-blend-mode: overlay;
-  transform: translateZ(0);
-}
+      <div class="cta-row">
+        <button class="btn primary" id="btn-start" type="button">Comenzar</button>
+      </div>
 
-/* ✅ Todo tu contenido arriba del fondo */
-.wrap{
-  position: relative;
-  z-index: 2;
+      <p class="fineprint">Al finalizar vas a recibir un resultado personalizado.</p>
+    </section>
 
-  max-width:880px;
-  margin:0 auto;
-  padding:28px 16px 48px;
-}
+    <!-- QUIZ -->
+    <section class="card screen hidden" id="screen-quiz" aria-live="polite" hidden>
+      <div class="progress" aria-label="Progreso del test">
+        <div class="bar" id="quiz-bar" style="width:0%"></div>
+      </div>
 
-.brand{
-  display:flex;
-  gap:14px;
-  align-items:center;
-  margin-bottom:18px;
-}
-.logo{
-  width:46px; height:46px;
-  display:grid; place-items:center;
-  border-radius:14px;
-  background: linear-gradient(180deg, rgba(215,180,106,.25), rgba(255,255,255,.06));
-  border:1px solid var(--line);
-  font-size:22px;
-}
-h1{
-  margin:0;
-  font-size:20px;
-  letter-spacing:.2px;
-}
-.subtitle{
-  margin:2px 0 0;
-  color:var(--muted);
-  font-size:13px;
-}
+      <div class="quiz-head">
+        <h2 id="q-title">Pregunta</h2>
+        <p class="muted" id="q-count">1 de 9</p>
+      </div>
 
-.card{
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border:1px solid var(--line);
-  border-radius: var(--radius);
-  padding:22px;
-  box-shadow: 0 10px 40px rgba(0,0,0,.35);
-}
+      <p class="muted" id="quiz-greeting"></p>
+      <p class="muted" id="q-hint">Elegí una opción para habilitar “Siguiente”.</p>
 
-.screen.hidden{ display:none; }
-.screen[hidden]{ display:none; }
+      <div id="q-options" class="options" role="group" aria-label="Opciones" aria-describedby="q-hint"></div>
 
-.progress{
-  height:10px;
-  background: rgba(255,255,255,.06);
-  border-radius: 999px;
-  overflow:hidden;
-  border:1px solid var(--line);
-  margin-bottom:16px;
-}
-.bar{
-  height:100%;
-  background: linear-gradient(90deg, var(--gold), rgba(215,180,106,.55));
-  width:0%;
-}
+      <div class="cta-row split stack quiz-actions">
+        <button class="btn ghost" id="btn-prev" type="button" disabled>Volver</button>
+        <button class="btn primary" id="btn-next" type="button" disabled>Siguiente</button>
+      </div>
+    </section>
 
-.quiz-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:12px;
-}
+    <!-- FORM FINAL -->
+    <section class="card screen hidden" id="screen-lead" hidden>
+      <div class="progress" aria-label="Paso final">
+        <div class="bar" style="width: 92%"></div>
+      </div>
 
-/* ✅ SOLO el título de pregunta se vuelve "fila" para el badge */
-#q-title{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-}
+      <h2>Último paso para ver sus resultados</h2>
+      <p class="muted">Completá estos datos y te mostramos el resultado personalizado.</p>
 
-h2{
-  margin:0 0 8px 0;
-  font-size:20px;
-  line-height:1.25;
-}
+      <form id="lead-form" class="form" novalidate>
+        <div class="field">
+          <label for="nombre">Nombre y apellido <span class="req">*</span></label>
+          <input id="nombre" name="nombre" type="text" placeholder="Ej: Cecilia Lezcano" autocomplete="name" required />
+        </div>
 
-.muted{
-  color:var(--muted);
-  margin:0;
-}
-.fineprint{
-  color:var(--muted);
-  font-size:12px;
-  margin:14px 0 0;
-  opacity:.9;
-}
+        <div class="field">
+          <label for="telefono">Teléfono <span class="req">*</span></label>
+          <input id="telefono" name="telefono" type="tel" placeholder="Ej: 0985 689 454"
+                 autocomplete="tel" inputmode="tel" required />
+          <small>Solo lo utilizamos para enviar información personalizada sobre su experiencia musical.</small>
+        </div>
 
-.options{
-  display:grid;
-  gap:10px;
-  margin:14px 0 16px;
-}
+        <div class="field">
+          <label for="email">Email (opcional)</label>
+          <input id="email" name="email" type="email" placeholder="Ej: paulina@gmail.com" autocomplete="email" inputmode="email" />
+        </div>
 
-.opt{
-  width:100%;
-  text-align:left;
-  padding:14px 14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  color:var(--text);
-  cursor:pointer;
-  font-size:14px;
-  line-height:1.25;
-  transition: transform .06s ease, background .15s ease, border-color .15s ease;
-}
-.opt:active{ transform: scale(.99); }
-.opt.selected{
-  border-color: rgba(215,180,106,.7);
-  background: rgba(215,180,106,.10);
-}
+        <div class="field">
+          <label for="fecha_boda">Fecha de la boda <span class="req">*</span></label>
+          <input id="fecha_boda" name="fecha_boda" type="date" required />
+        </div>
 
-/* ✅ Hover solo donde realmente existe hover (evita "hover pegado" en mobile) */
-@media (hover:hover) and (pointer:fine){
-  .opt:hover{ background: rgba(255,255,255,.05); }
-  .btn:hover{ background: rgba(255,255,255,.06); }
-}
+        <div class="field">
+          <label for="venue">¿Dónde será tu venue? <span class="req">*</span></label>
+          <input
+            id="venue"
+            name="venue"
+            type="text"
+            list="venue-options"
+            placeholder="Escribí o elegí tu venue"
+            autocomplete="off"
+            required
+          />
+          <datalist id="venue-options">
+            <option value="Bellagio"></option>
+            <option value="Bissini"></option>
+            <option value="Casa 1927"></option>
+            <option value="Casa Corbellani"></option>
+            <option value="Casa Puente"></option>
+            <option value="Castillo"></option>
+            <option value="Castillo Remanso"></option>
+            <option value="Costa del Lago"></option>
+            <option value="Es Vedra"></option>
+            <option value="Foz"></option>
+            <option value="Isabella"></option>
+            <option value="La Glorieta"></option>
+            <option value="La Isabella"></option>
+            <option value="La Riviere"></option>
+            <option value="La Roche Eventos"></option>
+            <option value="Las Takuaras"></option>
+            <option value="Las Ventanas"></option>
+            <option value="Mantra"></option>
+            <option value="Mantra Salon Boutique"></option>
+            <option value="Paraná Country Club"></option>
+            <option value="Puerto Liebig"></option>
+            <option value="Royal"></option>
+            <option value="Royal eventos"></option>
+            <option value="Rusticana"></option>
+            <option value="Rusticana Eventos"></option>
+            <option value="Soir"></option>
+            <option value="Soir Eventos"></option>
+            <option value="Talleryrand"></option>
+            <option value="Talleryrand Costanera"></option>
+            <option value="Tiam Eventos"></option>
+            <option value="Villa Jardin"></option>
+            <option value="Villa Maria"></option>
+            <option value="Vista Verde"></option>
+          </datalist>
 
-.k{
-  display:inline-grid;
-  place-items:center;
-  width:26px; height:26px;
-  border-radius:9px;
-  margin-right:10px;
-  font-weight:700;
-  font-size:12px;
-  background: rgba(215,180,106,.18);
-  border:1px solid rgba(215,180,106,.35);
-  color: var(--text);
-}
+          <small class="venue-note">
+            Escribí el nombre de tu venue. Si está en la lista, se va a sugerir automáticamente; si no, podés dejarlo escrito manualmente.
+          </small>
+        </div>
 
-.cta-row{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:14px;
-}
-.cta-row.split{ justify-content:space-between; }
-.cta-row.stack{ flex-wrap:wrap; }
-.quiz-actions{ margin-top:10px; }
+        <div class="field">
+          <label for="invitados">Cantidad aproximada de invitados <span class="req">*</span></label>
+          <select id="invitados" name="invitados" required>
+            <option value="" selected disabled>Elegí una opción</option>
+            <option>Menos de 80</option>
+            <option>80 – 150</option>
+            <option>150 – 250</option>
+            <option>Más de 250</option>
+          </select>
+        </div>
 
-.btn{
-  appearance:none;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.04);
-  color:var(--text);
-  padding:12px 14px;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:650;
-  font-size:14px;
-  transition: background .15s ease, transform .06s ease, border-color .15s ease;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  min-width: 160px;
-}
-.btn:active{ transform: scale(.99); }
-.btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
+        <div class="cta-row split stack">
+          <button class="btn ghost" id="btn-back-to-quiz" type="button">Volver al test</button>
+          <button class="btn primary" id="btn-show-results" type="submit">Ver mis resultados</button>
+        </div>
 
-.btn.primary{
-  border-color: rgba(215,180,106,.35);
-  background: linear-gradient(180deg, rgba(215,180,106,.22), rgba(215,180,106,.10));
-}
-.btn.ghost{
-  background: rgba(255,255,255,.02);
-}
+        <p class="fineprint"><span class="req">*</span> Campos obligatorios.</p>
+      </form>
+    </section>
 
-.form{
-  display:grid;
-  gap:14px;
-}
-.field label{
-  display:block;
-  margin-bottom:6px;
-  font-size:13px;
-  color: var(--text);
-}
-.field input, .field select{
-  width:100%;
-  padding:12px 12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background: rgba(0,0,0,.25);
-  color: var(--text);
-  outline:none;
+    <!-- RESULT -->
+    <section class="card screen hidden" id="screen-result" hidden>
+      <div class="progress" aria-label="Progreso final">
+        <div class="bar" style="width: 100%"></div>
+      </div>
 
-  /* ✅ iOS: evitar zoom en inputs */
-  font-size:16px;
-}
-.field small{
-  display:block;
-  margin-top:7px;
-  color: var(--muted);
-  font-size:12px;
-}
-.req{ color: var(--gold); }
+      <h2 id="result-title">Tu resultado</h2>
+      <p class="muted" id="result-subtitle"></p>
 
-.result-box{
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:14px;
-  background: rgba(255,255,255,.03);
-}
-.result-box h3{ margin:0 0 8px; font-size:16px; }
-.result-box h4{ margin:0 0 8px; font-size:14px; }
-.result-box ul{ margin:8px 0 0 18px; color:var(--text); }
-.result-box li{ margin:6px 0; color:var(--text); }
+      <div class="result-box" id="result-brief"></div>
 
-.gold-card{
-  margin-top:14px;
-  border-radius:16px;
-  border:1px solid rgba(215,180,106,.35);
-  background: linear-gradient(180deg, rgba(215,180,106,.14), rgba(255,255,255,.02));
-  padding:14px;
-}
-.gold-title{
-  font-weight:800;
-  letter-spacing:.2px;
-  margin-bottom:6px;
-}
-.gold-percentage{
-  font-size:34px;
-  font-weight:900;
-  margin:4px 0 10px;
-}
-.gold-text{
-  color: var(--muted);
-  line-height:1.4;
-}
+      <div class="cta-row">
+        <button class="btn ghost" id="btn-toggle-details" type="button">Ver análisis completo</button>
+      </div>
 
-/* ✅ Venue note rojo */
-.field small.venue-note{
-  color:#e05a5a;
-  font-weight:500;
-}
+      <div class="result-box hidden" id="result-details" hidden></div>
 
-.foot{
-  margin-top:18px;
-  text-align:center;
-  color: var(--muted);
-  font-size:12px;
-}
+      <div class="cta-row split stack">
+        <button class="btn ghost" id="btn-retry" type="button">Volver a hacer el test</button>
 
-/* ==========================
-   SLIDER (music_importance)
-   ========================== */
-.slider-wrap{
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.03);
-  border-radius:14px;
-  padding:14px;
-}
-.slider-top{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color: var(--muted);
-  margin-bottom:10px;
-}
-.slider-value{
-  min-width:34px;
-  height:30px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  color: var(--text);
-  background: rgba(215,180,106,.14);
-  border:1px solid rgba(215,180,106,.25);
-}
-.slider{ width:100%; }
-.slider-labels{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-  font-size:12px;
-  color: var(--muted);
-}
+        <a class="btn ghost" id="btn-ig"
+           href="https://www.instagram.com/elviolindececi/"
+           target="_blank" rel="noopener">
+          Seguir en Instagram
+        </a>
 
-/* ==========================
-   ✅ BADGE DORADO (iPhone-safe)
-   ========================== */
-.q-icon-badge{
-  width:28px;
-  height:28px;
-  border-radius:10px;
-  display:inline-grid;
-  place-items:center;
-  flex: 0 0 auto;
-  margin-top:2px;
-  background: rgba(215,180,106,.18);
-  border: 1px solid rgba(215,180,106,.45);
-  box-shadow:
-    0 0 10px rgba(215,180,106,.20),
-    inset 0 1px 0 rgba(255,255,255,.10);
-}
-.q-title-text{ display:block; }
+        <a class="btn primary" id="btn-calendly"
+           href="https://calendly.com/elviolindececi/30min"
+           target="_blank" rel="noopener">
+          🎻 Agendá tu reunión privada con Ceci
+        </a>
 
-/* ✅ escena/quote/cta */
-.quote{
-  border:1px solid rgba(215,180,106,.22);
-  background: rgba(215,180,106,.06);
-  border-radius:14px;
-  padding:12px 14px;
-}
-.scene{
-  margin-top:10px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,.02);
-  border-radius:14px;
-  padding:12px 14px;
-}
-.scene .line{
-  margin:0;
-  color: var(--text);
-  line-height:1.55;
-}
-.cta-invite{
-  margin-top:12px;
-  border:1px solid rgba(215,180,106,.25);
-  background: rgba(215,180,106,.08);
-  border-radius:14px;
-  padding:12px 14px;
-}
+        <a class="btn ghost" id="btn-wa"
+           href="https://wa.me/595985689454"
+           target="_blank" rel="noopener">
+          Prefiero escribir por WhatsApp
+        </a>
+      </div>
 
-/* ==========================
-   ✅ WhatsApp icon (verde)
-   ========================== */
-.wa-icon{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:22px;
-  height:22px;
-}
-.wa-icon svg{
-  display:block;
-  fill:#25D366; /* verde WhatsApp */
-}
+      <p class="fineprint">
+        Si quieren, pueden enviarnos sus canciones favoritas y diseñamos un repertorio personalizado.
+      </p>
+    </section>
 
-/* ==========================
-   ✅ FOCUS VISIBLE (accesibilidad + premium)
-   ========================== */
-.opt:focus-visible,
-.btn:focus-visible,
-.field input:focus-visible,
-.field select:focus-visible,
-.slider:focus-visible{
-  outline: 2px solid rgba(215,180,106,.75);
-  outline-offset: 2px;
-}
-/* ✅ Anti-banding (grain overlay) */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+    <footer class="foot">
+      <span>© El Violín de Ceci</span>
+    </footer>
+  </main>
 
-  /* Ruido muy sutil */
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-  opacity: .05; /* ajustá 0.03–0.07 */
-  mix-blend-mode: overlay;
-}
+  <script src="app.js?v=14" defer></script>
+</body>
+</html>
 
-
-
-.wrap{ position: relative; z-index: 1; }
 
 
 
