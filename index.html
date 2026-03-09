@@ -190,6 +190,28 @@
 
       <div class="result-box" id="result-brief"></div>
 
+      <div class="result-box result-music" id="result-music-box">
+        <div class="music-kicker">🎻 Imaginá este momento…</div>
+        <h3 id="result-music-title">Así podría sonar tu entrada</h3>
+        <p class="muted result-music-copy" id="result-music-copy">
+          Estás a punto de caminar hacia el altar. Tus invitados se ponen de pie. El violín comienza a sonar…
+        </p>
+
+        <audio id="result-audio" controls preload="metadata">
+          Tu navegador no soporta audio HTML5.
+        </audio>
+
+        <p class="fineprint" id="result-audio-nowplaying">Tema sugerido para su entrada.</p>
+
+        <div class="cta-row">
+          <a class="btn primary" id="btn-playlist-calendly"
+             href="https://calendly.com/elviolindececi/30min"
+             target="_blank" rel="noopener">
+            Escuchar el setlist musical completo
+          </a>
+        </div>
+      </div>
+
       <div class="cta-row">
         <button class="btn ghost" id="btn-toggle-details" type="button">Ver análisis completo</button>
       </div>
@@ -231,7 +253,6 @@
   <script src="app.js?v=14" defer></script>
 </body>
 </html>
-
 
 
 
