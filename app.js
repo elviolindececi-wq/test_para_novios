@@ -12,11 +12,13 @@ const WHATSAPP_BASE = "https://wa.me/595985689454";
 const INSTAGRAM_URL = "https://www.instagram.com/elviolindececi/";
 const CALENDLY_URL = "https://calendly.com/elviolindececi/30min";
 const AUDIO_BY_ARCHETYPE = {
+
   A: { file: "audio/canon-in-d.mp3", label: "Canon in D — Pachelbel" },
   B: { file: "audio/yellow.mp3", label: "Yellow — Coldplay" },
-  C: { file: "audio/perfect.mp3", label: "Perfect — Ed Sheeran" },
-  D: { file: "audio/cant-help-falling-in-love.mp3", label: "Can’t Help Falling in Love" },
-  E: { file: "audio/cant-help-falling-in-love.mp3", label: "Can’t Help Falling in Love" }
+  C: { file: "audio/experience.mp3", label: "Experience — Ludovico Einaudi" },
+  D: { file: "audio/cant-help-falling-in-love.mp3", label: "Can’t Help Falling in Love — Elvis Presley" },
+  E: { file: "audio/turning-page.mp3", label: "Turning Page — Sleeping At Last" }
+
 };
 const MICRO_MOMENT_BY_ARCHETYPE = {
   A: ["Las puertas se abren.", "El salón baja el murmullo.", "El violín empieza a sonar…"],
