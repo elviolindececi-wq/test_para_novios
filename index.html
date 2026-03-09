@@ -109,46 +109,53 @@
 
         <div class="field">
           <label for="venue">¿Dónde será tu venue? <span class="req">*</span></label>
-          <select id="venue" name="venue" required>
-            <option value="" selected disabled>Elegí una opción</option>
-            <option>Bellagio</option>
-            <option>Bissini</option>
-            <option>Casa 1927</option>
-            <option>Casa Corbellani</option>
-            <option>Casa Puente</option>
-            <option>Castillo</option>
-            <option>Castillo Remanso</option>
-            <option>Costa del Lago</option>
-            <option>Es Vedra</option>
-            <option>Foz</option>
-            <option>Isabella</option>
-            <option>La Glorieta</option>
-            <option>La Isabella</option>
-            <option>La Riviere</option>
-            <option>La Roche Eventos</option>
-            <option>Las Takuaras</option>
-            <option>Las Ventanas</option>
-            <option>Mantra</option>
-            <option>Mantra Salon Boutique</option>
-            <option>Paraná Country Club</option>
-            <option>Puerto Liebig</option>
-            <option>Royal</option>
-            <option>Royal eventos</option>
-            <option>Rusticana</option>
-            <option>Rusticana Eventos</option>
-            <option>Soir</option>
-            <option>Soir Eventos</option>
-            <option>Talleryrand</option>
-            <option>Talleryrand Costanera</option>
-            <option>Tiam Eventos</option>
-            <option>Villa Jardin</option>
-            <option>Villa Maria</option>
-            <option>Vista Verde</option>
-            <option>Otro / No está en la lista</option>
-            </select>
+          <input
+            id="venue"
+            name="venue"
+            type="text"
+            list="venue-options"
+            placeholder="Escribí o elegí tu venue"
+            autocomplete="off"
+            required
+          />
+          <datalist id="venue-options">
+            <option value="Bellagio"></option>
+            <option value="Bissini"></option>
+            <option value="Casa 1927"></option>
+            <option value="Casa Corbellani"></option>
+            <option value="Casa Puente"></option>
+            <option value="Castillo"></option>
+            <option value="Castillo Remanso"></option>
+            <option value="Costa del Lago"></option>
+            <option value="Es Vedra"></option>
+            <option value="Foz"></option>
+            <option value="Isabella"></option>
+            <option value="La Glorieta"></option>
+            <option value="La Isabella"></option>
+            <option value="La Riviere"></option>
+            <option value="La Roche Eventos"></option>
+            <option value="Las Takuaras"></option>
+            <option value="Las Ventanas"></option>
+            <option value="Mantra"></option>
+            <option value="Mantra Salon Boutique"></option>
+            <option value="Paraná Country Club"></option>
+            <option value="Puerto Liebig"></option>
+            <option value="Royal"></option>
+            <option value="Royal eventos"></option>
+            <option value="Rusticana"></option>
+            <option value="Rusticana Eventos"></option>
+            <option value="Soir"></option>
+            <option value="Soir Eventos"></option>
+            <option value="Talleryrand"></option>
+            <option value="Talleryrand Costanera"></option>
+            <option value="Tiam Eventos"></option>
+            <option value="Villa Jardin"></option>
+            <option value="Villa Maria"></option>
+            <option value="Vista Verde"></option>
+          </datalist>
 
           <small class="venue-note">
-            El lugar del venue influye en el resultado. Si no está en la lista, seleccioná “Otro”.
+            Escribí el nombre de tu venue. Si está en la lista, se va a sugerir automáticamente; si no, podés dejarlo escrito manualmente.
           </small>
         </div>
 
@@ -224,4 +231,6 @@
   <script src="app.js?v=14" defer></script>
 </body>
 </html>
+
+
 
