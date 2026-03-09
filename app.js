@@ -11,6 +11,20 @@ const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyIEcKAHlnfrI9Ktb8q
 const WHATSAPP_BASE = "https://wa.me/595985689454";
 const INSTAGRAM_URL = "https://www.instagram.com/elviolindececi/";
 const CALENDLY_URL = "https://calendly.com/elviolindececi/30min";
+const AUDIO_BY_ARCHETYPE = {
+  A: { file: "audio/canon-in-d.mp3", label: "Canon in D — Pachelbel" },
+  B: { file: "audio/yellow.mp3", label: "Yellow — Coldplay" },
+  C: { file: "audio/perfect.mp3", label: "Perfect — Ed Sheeran" },
+  D: { file: "audio/cant-help-falling-in-love.mp3", label: "Can’t Help Falling in Love" },
+  E: { file: "audio/cant-help-falling-in-love.mp3", label: "Can’t Help Falling in Love" }
+};
+const MICRO_MOMENT_BY_ARCHETYPE = {
+  A: ["Las puertas se abren.", "El salón baja el murmullo.", "El violín empieza a sonar…"],
+  B: ["Caminás entre miradas emocionadas.", "Todo se siente cálido y real.", "El violín empieza a sonar…"],
+  C: ["Hay un silencio breve.", "Se siente algo distinto, muy ustedes.", "El violín empieza a sonar…"],
+  D: ["Las sonrisas se multiplican.", "La emoción sube desde el primer paso.", "El violín empieza a sonar…"],
+  E: ["El tiempo se frena por un instante.", "Solo importa este momento.", "El violín empieza a sonar…"]
+};
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -26,6 +40,7 @@ function gaEvent(name, params = {}){
 }
 
 function show(id){
+  if (id !== "#screen-result") stopResultAudio_();
   document.querySelectorAll(".screen").forEach(s => {
     s.classList.add("hidden");
     s.setAttribute("hidden","hidden");
@@ -469,6 +484,11 @@ const btnRetry = $("#btn-retry");
 const btnCalendly = $("#btn-calendly");
 const btnWA = $("#btn-wa");
 const btnIG = $("#btn-ig");
+const resultAudio = $("#result-audio");
+const resultMusicTitle = $("#result-music-title");
+const resultMusicCopy = $("#result-music-copy");
+const resultAudioNowPlaying = $("#result-audio-nowplaying");
+const btnPlaylistCalendly = $("#btn-playlist-calendly");
 
 // ================================
 // EVENTS
@@ -652,7 +672,11 @@ if (btnIG) btnIG.setAttribute("href", INSTAGRAM_URL);
 
 // ✅ GA4: clic Calendly
 btnCalendly?.addEventListener("click", () => {
-  gaEvent("cta_calendly_click", { lead_id });
+  gaEvent("cta_calendly_click", { lead_id, source: "main_cta" });
+});
+
+btnPlaylistCalendly?.addEventListener("click", () => {
+  gaEvent("cta_calendly_click", { lead_id, source: "playlist_cta" });
 });
 
 // ================================
@@ -1016,6 +1040,53 @@ function buildWhyThisResult_(payload, primaryKey, intensity){
   return `Te salió ${arch} porque eligieron ${entry}, ${cocktail} y buscan que la música ayude a ${role}. Por eso, la intensidad ideal es ${mName}.`;
 }
 
+function getEntrySongForArchetype_(primaryKey){
+  return AUDIO_BY_ARCHETYPE[primaryKey] || AUDIO_BY_ARCHETYPE.A;
+}
+
+function getMicroMomentLines_(primaryKey){
+  return MICRO_MOMENT_BY_ARCHETYPE[primaryKey] || MICRO_MOMENT_BY_ARCHETYPE.A;
+}
+
+function stopResultAudio_(){
+  if (!resultAudio) return;
+  try {
+    resultAudio.pause();
+    resultAudio.currentTime = 0;
+    resultAudio.removeAttribute("src");
+    resultAudio.load();
+  } catch {}
+}
+
+function configureResultAudio_(primaryKey){
+  if (!resultAudio || !resultMusicTitle || !resultMusicCopy || !resultAudioNowPlaying) return;
+
+  const entrySong = getEntrySongForArchetype_(primaryKey);
+  const lines = getMicroMomentLines_(primaryKey);
+
+  resultMusicTitle.textContent = "Así podría sonar tu entrada";
+  resultMusicCopy.innerHTML = lines.map((line) => escapeHtml(line)).join("<br>");
+  resultAudioNowPlaying.textContent = `Tema sugerido para su entrada: ${entrySong.label}`;
+
+  resultAudio.src = entrySong.file;
+  resultAudio.dataset.trackLabel = entrySong.label;
+}
+
+function autoplayResultAudio_(){
+  if (!resultAudio) return;
+
+  window.setTimeout(() => {
+    const playPromise = resultAudio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        if (resultAudioNowPlaying) {
+          resultAudioNowPlaying.textContent = `Tocá play para escuchar: ${resultAudio.dataset.trackLabel || "su tema sugerido"}.`;
+        }
+      });
+    }
+  }, 1800);
+}
+
 // ================================
 // RESULT RENDER
 // ================================
@@ -1034,6 +1105,8 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   resultTitle.textContent = `${a1.name}`;
   resultSubtitle.textContent =
     `${hello} · Intensidad: ${m.name} · Importancia música: ${payload.q6_music_importance}/10 · Prioridad: ${prioridad}`;
+
+  configureResultAudio_(computed.primary);
 
   const because = buildWhyThisResult_(payload, computed.primary, intensity);
   const ctaLine = buildBoutiqueCTA_(payload.q9_focus_moment);
@@ -1137,15 +1210,22 @@ function renderResult(payload, computed, intensity, prioridad, indice){
   btnToggleDetails.textContent = "Ver análisis completo";
 
   // Calendly como CTA principal (tracking + lead_id)
+  const calendlyParams = new URLSearchParams();
+  calendlyParams.set("utm_source", tracking.utm_source || tracking.source || "test");
+  calendlyParams.set("utm_medium", tracking.utm_medium || "quiz");
+  calendlyParams.set("utm_campaign", tracking.utm_campaign || "quiz_result");
+  calendlyParams.set("utm_content", computed.primary);
+  calendlyParams.set("lead_id", payload.lead_id || lead_id);
+  const calendlyHref = `${CALENDLY_URL}?${calendlyParams.toString()}`;
+
   if (btnCalendly){
-    const calendlyParams = new URLSearchParams();
-    calendlyParams.set("utm_source", tracking.utm_source || tracking.source || "test");
-    calendlyParams.set("utm_medium", tracking.utm_medium || "quiz");
-    calendlyParams.set("utm_campaign", tracking.utm_campaign || "quiz_result");
-    calendlyParams.set("utm_content", computed.primary);
-    calendlyParams.set("lead_id", payload.lead_id || lead_id);
-    btnCalendly.setAttribute("href", `${CALENDLY_URL}?${calendlyParams.toString()}`);
+    btnCalendly.setAttribute("href", calendlyHref);
   }
+  if (btnPlaylistCalendly){
+    btnPlaylistCalendly.setAttribute("href", calendlyHref);
+  }
+
+  autoplayResultAudio_();
 
   // WhatsApp fallback
   const text =
@@ -1166,5 +1246,7 @@ function renderResult(payload, computed, intensity, prioridad, indice){
 // ================================
 show("#screen-intro");
 console.log("✅ app.js ULTRA BOUTIQUE cargado OK", { lead_id, tracking });
+
+
 
 
