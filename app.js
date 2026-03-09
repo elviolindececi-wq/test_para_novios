@@ -78,6 +78,17 @@ function normalizeVenue(s){
     .trim();
 }
 
+function canonicalizeVenueInput(rawVenue){
+  const typedVenue = String(rawVenue || "").trim();
+  if (!typedVenue) return "";
+
+  const normalizedTypedVenue = normalizeVenue(typedVenue);
+  const venueOptions = Array.from(document.querySelectorAll("#venue-options option"));
+  const exactMatch = venueOptions.find((opt) => normalizeVenue(opt.value) === normalizedTypedVenue);
+
+  return exactMatch?.value || typedVenue;
+}
+
 function daysUntil(dateStr){
   if(!dateStr) return "";
   const [y,m,d] = String(dateStr).split("-").map(Number);
@@ -537,7 +548,7 @@ leadForm?.addEventListener("submit", async (e) => {
   const telefono = $("#telefono")?.value?.trim() || "";
   const email = $("#email")?.value?.trim() || "";
   const fecha_boda = $("#fecha_boda")?.value || "";
-  const venue = $("#venue")?.value?.trim() || "";
+  const venue = canonicalizeVenueInput($("#venue")?.value);
   const invitados = $("#invitados")?.value || "";
 
   if(!nombre || !telefono || !fecha_boda || !venue || !invitados){
@@ -1155,4 +1166,5 @@ function renderResult(payload, computed, intensity, prioridad, indice){
 // ================================
 show("#screen-intro");
 console.log("✅ app.js ULTRA BOUTIQUE cargado OK", { lead_id, tracking });
+
 
